@@ -10,8 +10,15 @@ let height = window.innerHeight;
 //-- GUI PARAMETERS
 var gui;
 const parameters = {
-  resolutionX: 3,
-  rotationX: 100
+  addBoard() { createBoard()},
+  addBeam() { createBeam()},
+  addBar() { createBar()},
+  test() { hi() },
+}
+
+
+function hi(){
+  alert( 'heyo' );
 }
 
 //-- SCENE VARIABLES
@@ -32,9 +39,13 @@ let rotX = parameters.rotationX;
 function main(){
   //GUI
   gui = new GUI;
-  gui.add(parameters, 'resolutionX', 1, 10, 1);
-  gui.add(parameters, 'rotationX', 0, 180);
+  gui.add(parameters, 'test');
 
+  const addObjectFolder = gui.addFolder('Add Objects');
+  addObjectFolder.add(parameters, 'addBoard');
+  addObjectFolder.add(parameters, 'addBeam');
+  addObjectFolder.add(parameters, 'addBar');
+  
   //CREATE SCENE AND CAMERA
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera( 15, width / height, 0.1, 100);
@@ -52,8 +63,7 @@ function main(){
 
   //GEOMETRY INITIATION
   // Initiate first cubes
-  createCubes();
-  rotateCubes();
+  createGrid();
 
   //RESPONSIVE WINDOW
   window.addEventListener('resize', handleResize);
@@ -77,7 +87,43 @@ function main(){
 //-----------------------------------------------------------------------------------
 //GEOMETRY FUNCTIONS
 // Create Cubes
-function createCubes(){
+function createGrid(){
+  scene.add( new THREE.GridHelper( 5, 10, 0x888888, 0x444444 ) );
+}
+
+//BOARDS
+//create Boards
+function createBoard(){
+  for(let i=0; i<5; i++){
+    const geometry = new THREE.BoxGeometry(0.1, 1,1);
+    const material = new THREE.MeshPhysicalMaterial();
+    material.color = new THREE.Color(0xffffff);
+    material.color.setRGB(0,0,Math.random());
+
+    const cube = new THREE.Mesh(geometry, material);
+    cube.position.set(i*0.1, 0, 0);
+    cube.name = "cube " + i;
+    sceneCubes.push(cube);
+
+    scene.add(cube);
+  }
+  animate();
+}
+
+//Transform Boards
+function transformBoard(){
+  sceneCubes.forEach((element, index)=>{
+    let scene_cube = scene.getObjectByName(element.name);
+    let radian_rot = (index*(rotX/resX)) * (Math.PI/180);
+    scene_cube.rotation.set(radian_rot, 0, 0)
+    rotX = parameters.rotationX;
+  })
+}
+
+
+//Beams
+//create Beams
+function createBeam(){
   for(let i=0; i<resX; i++){
     const geometry = new THREE.BoxGeometry(0.1, 1,1);
     const material = new THREE.MeshPhysicalMaterial();
@@ -93,8 +139,8 @@ function createCubes(){
   }
 }
 
-//Rotate Cubes
-function rotateCubes(){
+//Transform Beams
+function transformBeam(){
   sceneCubes.forEach((element, index)=>{
     let scene_cube = scene.getObjectByName(element.name);
     let radian_rot = (index*(rotX/resX)) * (Math.PI/180);
@@ -102,6 +148,36 @@ function rotateCubes(){
     rotX = parameters.rotationX;
   })
 }
+
+
+//BARS
+//create Bars
+function createBar(){
+  for(let i=0; i<resX; i++){
+    const geometry = new THREE.BoxGeometry(0.1, 1,1);
+    const material = new THREE.MeshPhysicalMaterial();
+    material.color = new THREE.Color(0xffffff);
+    material.color.setRGB(0,0,Math.random());
+
+    const cube = new THREE.Mesh(geometry, material);
+    cube.position.set(i*0.1, 0, 0);
+    cube.name = "cube " + i;
+    sceneCubes.push(cube);
+
+    scene.add(cube);
+  }
+}
+
+//Transform Bars
+function transformBar(){
+  sceneCubes.forEach((element, index)=>{
+    let scene_cube = scene.getObjectByName(element.name);
+    let radian_rot = (index*(rotX/resX)) * (Math.PI/180);
+    scene_cube.rotation.set(radian_rot, 0, 0)
+    rotX = parameters.rotationX;
+  })
+}
+
 
 //Remove 3D Objects and clean the caches
 function removeObject(sceneObject){
