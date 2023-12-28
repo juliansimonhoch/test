@@ -7,18 +7,19 @@ import GUI from 'lil-gui';
 //CONSTANT & VARIABLES
 let width = window.innerWidth;
 let height = window.innerHeight;
+
 //-- GUI PARAMETERS
 var gui;
 const parameters = {
-  addBoard() { createBoard()},
-  addBeam() { createBeam()},
-  addBar() { createBar()},
+  Board() { createBoard()},
+  Beam() { createBeam()},
+  Bar() { createBar()},
   test() { hi() },
 }
 
 
 function hi(){
-  alert( 'heyo' );
+  alert( 'Booom, das funktioniert schonmal!' );
 }
 
 //-- SCENE VARIABLES
@@ -32,24 +33,26 @@ var directionalLight;
 
 //-- GEOMETRY PARAMETERS
 //Create an empty array for storing all the cubes
-let sceneCubes = [];
-let resX = parameters.resolutionX;
-let rotX = parameters.rotationX;
+let sceneObjects = [];
+
+let boardCounter = 1;
+let beamCounter = 1;
+let barCounter = 1;
 
 function main(){
   //GUI
   gui = new GUI;
   gui.add(parameters, 'test');
-
+  //Add Objects
   const addObjectFolder = gui.addFolder('Add Objects');
-  addObjectFolder.add(parameters, 'addBoard');
-  addObjectFolder.add(parameters, 'addBeam');
-  addObjectFolder.add(parameters, 'addBar');
+  addObjectFolder.add(parameters, 'Board');
+  addObjectFolder.add(parameters, 'Beam');
+  addObjectFolder.add(parameters, 'Bar');
   
   //CREATE SCENE AND CAMERA
   scene = new THREE.Scene();
-  camera = new THREE.PerspectiveCamera( 15, width / height, 0.1, 100);
-  camera.position.set(10, 10, 10)
+  camera = new THREE.PerspectiveCamera( 15, width / height, 0.1, 1000);
+  camera.position.set(200, 100, 170)
 
   //LIGHTINGS
   ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -86,96 +89,81 @@ function main(){
 //HELPER FUNCTIONS
 //-----------------------------------------------------------------------------------
 //GEOMETRY FUNCTIONS
-// Create Cubes
+
+
+// Create Grid
 function createGrid(){
-  scene.add( new THREE.GridHelper( 5, 10, 0x888888, 0x444444 ) );
+  scene.add( new THREE.GridHelper( 100, 100, 0xd3d3d3 , 0xd3d3d3 ) );
+  scene.add( new THREE.GridHelper( 100, 10, 0x151515 , 0x151515 ) );
 }
 
 //BOARDS
 //create Boards
 function createBoard(){
-  for(let i=0; i<5; i++){
-    const geometry = new THREE.BoxGeometry(0.1, 1,1);
-    const material = new THREE.MeshPhysicalMaterial();
-    material.color = new THREE.Color(0xffffff);
-    material.color.setRGB(0,0,Math.random());
+  const geometry = new THREE.BoxGeometry(40, 2, 40);
+  const material = new THREE.MeshPhysicalMaterial();
+  material.color = new THREE.Color(0x7BAFD4);
 
-    const cube = new THREE.Mesh(geometry, material);
-    cube.position.set(i*0.1, 0, 0);
-    cube.name = "cube " + i;
-    sceneCubes.push(cube);
+  const board = new THREE.Mesh(geometry, material);
+  board.position.set(0, 1, 0);
+  board.name = "board " + boardCounter;
+  boardCounter ++;
+  sceneObjects.push(board);
 
-    scene.add(cube);
-  }
+  scene.add(board);
   animate();
 }
 
 //Transform Boards
 function transformBoard(){
-  sceneCubes.forEach((element, index)=>{
-    let scene_cube = scene.getObjectByName(element.name);
-    let radian_rot = (index*(rotX/resX)) * (Math.PI/180);
-    scene_cube.rotation.set(radian_rot, 0, 0)
-    rotX = parameters.rotationX;
-  })
+
 }
 
 
 //Beams
 //create Beams
 function createBeam(){
-  for(let i=0; i<resX; i++){
-    const geometry = new THREE.BoxGeometry(0.1, 1,1);
-    const material = new THREE.MeshPhysicalMaterial();
-    material.color = new THREE.Color(0xffffff);
-    material.color.setRGB(0,0,Math.random());
+  const geometry = new THREE.BoxGeometry(40, 2, 2);
+  const material = new THREE.MeshPhysicalMaterial();
+  material.color = new THREE.Color(0x7BAFD4);
 
-    const cube = new THREE.Mesh(geometry, material);
-    cube.position.set(i*0.1, 0, 0);
-    cube.name = "cube " + i;
-    sceneCubes.push(cube);
+  const beam = new THREE.Mesh(geometry, material);
+  beam.position.set(0, 1, 0);
+  beam.name = "beam " + beamCounter;
+  beamCounter ++;
+  sceneObjects.push(beam);
 
-    scene.add(cube);
-  }
+  scene.add(beam);
+  animate();
 }
 
 //Transform Beams
 function transformBeam(){
-  sceneCubes.forEach((element, index)=>{
-    let scene_cube = scene.getObjectByName(element.name);
-    let radian_rot = (index*(rotX/resX)) * (Math.PI/180);
-    scene_cube.rotation.set(radian_rot, 0, 0)
-    rotX = parameters.rotationX;
-  })
+
 }
 
 
 //BARS
 //create Bars
 function createBar(){
-  for(let i=0; i<resX; i++){
-    const geometry = new THREE.BoxGeometry(0.1, 1,1);
-    const material = new THREE.MeshPhysicalMaterial();
-    material.color = new THREE.Color(0xffffff);
-    material.color.setRGB(0,0,Math.random());
+  const geometry = new THREE.CylinderGeometry( 1, 1, 40, 32 );
+  const material = new THREE.MeshPhysicalMaterial();
+  material.color = new THREE.Color(0x7BAFD4);
 
-    const cube = new THREE.Mesh(geometry, material);
-    cube.position.set(i*0.1, 0, 0);
-    cube.name = "cube " + i;
-    sceneCubes.push(cube);
+  const bar = new THREE.Mesh(geometry, material);
+  bar.position.set(0, 1, 0);
+  bar.rotation.set(90 * (Math.PI/180), 0, 90 * (Math.PI/180));
+  bar.name = "bar " + beamCounter;
+  barCounter ++;
+  sceneObjects.push(bar);
 
-    scene.add(cube);
-  }
+  scene.add(bar);
+  animate();
 }
 
 //Transform Bars
 function transformBar(){
-  sceneCubes.forEach((element, index)=>{
-    let scene_cube = scene.getObjectByName(element.name);
-    let radian_rot = (index*(rotX/resX)) * (Math.PI/180);
-    scene_cube.rotation.set(radian_rot, 0, 0)
-    rotX = parameters.rotationX;
-  })
+
 }
 
 
@@ -201,15 +189,7 @@ function removeObject(sceneObject){
 
 //Remove the cubes
 function removeCubes(){
-  resX = parameters.resolutionX;
-  rotX = parameters.rotationX;
 
-  sceneCubes.forEach(element =>{
-    let scene_cube = scene.getObjectByName(element.name);
-    removeObject(scene_cube);
-  })
-
-  sceneCubes = [];
 }
 
 //RESPONSIVE
@@ -228,16 +208,6 @@ function animate() {
 	requestAnimationFrame( animate );
  
   control.update();
-
-  if(resX != parameters.resolutionX){
-    removeCubes();
-    createCubes();
-    rotateCubes();
-  }
-
-  if (rotX != parameters.rotationX){
-    rotateCubes();
-  }
  
 	renderer.render( scene, camera );
 }
