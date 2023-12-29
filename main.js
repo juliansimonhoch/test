@@ -309,6 +309,9 @@ function onKey() {
     transformedObject.material.color.set("#69f");
     transformedObject = null;
   }
+  if (event.key === "Backspace" || event.keyCode === 8) {
+    removeSelectedObject();
+  }
 }
 
 function scaleFactor(newValue, oldValue) {
