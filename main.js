@@ -80,7 +80,7 @@ function main() {
 
   //CREATE SCENE AND CAMERA
   scene = new THREE.Scene();
-  camera = new THREE.PerspectiveCamera(15, width / height, 0.1, 1000);
+  camera = new THREE.PerspectiveCamera(15, width / height, 0.1, 2000);
   camera.position.set(200, 100, 170);
 
   //LIGHTINGS
@@ -118,8 +118,8 @@ function main() {
   group = new THREE.Group();
   scene.add(group);
   const controls = new OrbitControls(camera, renderer.domElement);
-  controls.minDistance = 15;
-  controls.maxDistance = 250;
+  controls.minDistance = 2;
+  controls.maxDistance = 1000;
 
   //Transform selected Objects
   widthController.onChange(function (v) {
