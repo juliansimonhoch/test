@@ -23,6 +23,9 @@ const parameters = {
   Bar() {
     createBar();
   },
+  delete() {
+    removeSelectedObject();
+  },
   test() {
     hi();
   },
@@ -73,6 +76,7 @@ function main() {
   widthController = selectedObjectFolder.add(parameters, "width");
   heightController = selectedObjectFolder.add(parameters, "height");
   depthController = selectedObjectFolder.add(parameters, "depth");
+  selectedObjectFolder.add(parameters, "delete");
 
   //CREATE SCENE AND CAMERA
   scene = new THREE.Scene();
@@ -238,8 +242,9 @@ function removeObject(sceneObject) {
   sceneObject.removeFromParent();
 }
 
-//Remove the cubes
-function removeCubes() {}
+function removeSelectedObject() {
+  removeObject(transformedObject);
+}
 
 //RESPONSIVE
 function handleResize() {
