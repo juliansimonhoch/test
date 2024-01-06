@@ -34,6 +34,12 @@ const parameters = {
   export() {
     exportScene();
   },
+  move() {
+    moveMode();
+  },
+  rotate() {
+    rotateMode();
+  },
   width: 0,
   height: 0,
   depth: 0,
@@ -85,6 +91,8 @@ function main() {
   addObjectFolder.add(parameters, "Bar");
   //Add Object Settings
   const selectedObjectFolder = gui.addFolder("Selected Object");
+  selectedObjectFolder.add(parameters, "move");
+  selectedObjectFolder.add(parameters, "rotate");
   widthController = selectedObjectFolder.add(parameters, "width");
   heightController = selectedObjectFolder.add(parameters, "height");
   depthController = selectedObjectFolder.add(parameters, "depth");
@@ -131,6 +139,7 @@ function main() {
   document.addEventListener("pointermove", onPointerMove);
   canvas.addEventListener("click", onClick);
   window.addEventListener("keydown", onKey);
+  window.addEventListener("keyup", upKey);
 
   //RAYCASTER
   group = new THREE.Group();
@@ -171,7 +180,9 @@ function main() {
   });
 
   control = new TransformControls(camera, renderer.domElement);
-  control.addEventListener("change", animate);
+  //Die folgende Zeile lässt iwie alles ruckeln???
+
+  //control.addEventListener("change", animate);
 
   control.addEventListener("dragging-changed", function (event) {
     orbit.enabled = !event.value;
@@ -181,7 +192,7 @@ function main() {
   control.setSize(1.2);
 
   //EXECUTE THE UPDATE
-  //animate();
+  animate();
 }
 
 //-----------------------------------------------------------------------------------
@@ -330,11 +341,22 @@ function onClick() {
 }
 
 function onKey() {
-  if (event.key === "Escape" || event.keyCode === 27) {
+  if (event.key === "Escape") {
     deselectTransformedObject();
   }
-  if (event.key === "Backspace" || event.keyCode === 8) {
+  if (event.key === "Backspace") {
     deleteTransformedObject();
+  }
+  if (event.key === "Shift") {
+    control.setRotationSnap(THREE.MathUtils.degToRad(15));
+    control.setTranslationSnap(10);
+  }
+}
+
+function upKey() {
+  if (event.key === "Shift") {
+    control.setRotationSnap(false);
+    control.setTranslationSnap(1);
   }
 }
 
@@ -357,6 +379,14 @@ function deselectTransformedObject() {
   heightController.setValue(null);
   depthController.setValue(null);
   scene.remove(control);
+}
+
+function moveMode() {
+  control.setMode("translate");
+}
+
+function rotateMode() {
+  control.setMode("rotate");
 }
 
 function exportScene() {
