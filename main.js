@@ -26,7 +26,7 @@ const parameters = {
     createBar();
   },
   delete() {
-    removeSelectedObject();
+    deleteTransformedObject();
   },
   test() {
     hi();
@@ -41,7 +41,8 @@ const parameters = {
 };
 
 function hi() {
-  alert("Booom, das funktioniert schonmal!");
+  //alert("Out of sight, out of mind");
+  console.log(camera.position);
 }
 
 //-- SCENE VARIABLES
@@ -176,10 +177,11 @@ function main() {
     orbit.enabled = !event.value;
   });
   control.setMode("translate");
+  control.setTranslationSnap(1);
   control.setSize(1.2);
 
   //EXECUTE THE UPDATE
-  animate();
+  //animate();
 }
 
 //-----------------------------------------------------------------------------------
@@ -268,10 +270,6 @@ function removeObject(sceneObject) {
   sceneObject.removeFromParent();
 }
 
-function removeSelectedObject() {
-  removeObject(transformedObject);
-}
-
 //RESPONSIVE
 function handleResize() {
   width = window.innerWidth;
@@ -327,30 +325,16 @@ function onClick() {
     control.attach(transformedObject);
     scene.add(control);
   } else if (transformedObject) {
-    transformedObject.material.color.set("#69f");
-    transformedObject = null;
-    widthController.setValue(null);
-    heightController.setValue(null);
-    depthController.setValue(null);
-    scene.remove(control);
+    deselectTransformedObject();
   }
 }
 
 function onKey() {
   if (event.key === "Escape" || event.keyCode === 27) {
-    transformedObject.material.color.set("#69f");
-    transformedObject = null;
-    widthController.setValue(null);
-    heightController.setValue(null);
-    depthController.setValue(null);
-    scene.remove(control);
+    deselectTransformedObject();
   }
   if (event.key === "Backspace" || event.keyCode === 8) {
-    removeSelectedObject();
-    widthController.setValue(null);
-    heightController.setValue(null);
-    depthController.setValue(null);
-    scene.remove(control);
+    deleteTransformedObject();
   }
 }
 
@@ -358,7 +342,35 @@ function scaleFactor(newValue, oldValue) {
   return newValue / oldValue;
 }
 
+function deleteTransformedObject() {
+  removeObject(transformedObject);
+  widthController.setValue(null);
+  heightController.setValue(null);
+  depthController.setValue(null);
+  scene.remove(control);
+}
+
+function deselectTransformedObject() {
+  transformedObject.material.color.set("#69f");
+  transformedObject = null;
+  widthController.setValue(null);
+  heightController.setValue(null);
+  depthController.setValue(null);
+  scene.remove(control);
+}
+
 function exportScene() {
+  //Started Troubleshooting Alignment
+
+  /*const quaternion = new THREE.Quaternion().setFromEuler(
+    new THREE.Euler(-Math.PI / 2, 0, 0)
+  );
+  scene.traverse((child) => {
+    if (child instanceof THREE.Mesh) {
+      child.geometry.applyQuaternion(quaternion);
+    }
+  });
+  */
   const download = exporter.parse(scene, exporterOptions);
   const blob = new Blob([download], { type: "text/plain" });
   const link = document.createElement("a");
