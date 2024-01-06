@@ -7,15 +7,24 @@ import { STLExporter } from "three/addons/exporters/STLExporter.js";
 import GUI, { Controller } from "lil-gui";
 
 //CONSTANT & VARIABLES
+
+//-- WINDOW
 let width = window.innerWidth;
 let height = window.innerHeight;
 
-//-- GUI PARAMETERS
+//-- GUI
 var gui;
 var widthController;
 var heightController;
 var depthController;
+
+//-- GUI PARAMETER
+
 const parameters = {
+  width: 0,
+  height: 0,
+  depth: 0,
+  fileName: "exported_Model",
   Board() {
     createBoard();
   },
@@ -28,9 +37,6 @@ const parameters = {
   delete() {
     deleteTransformedObject();
   },
-  test() {
-    hi();
-  },
   export() {
     exportScene();
   },
@@ -40,16 +46,7 @@ const parameters = {
   rotate() {
     rotateMode();
   },
-  width: 0,
-  height: 0,
-  depth: 0,
-  fileName: "exported_Model",
 };
-
-function hi() {
-  //alert("Out of sight, out of mind");
-  console.log(camera.position);
-}
 
 //-- SCENE VARIABLES
 var scene;
@@ -60,10 +57,10 @@ var orbit;
 var control;
 var ambientLight;
 var directionalLight;
-var exporter;
 
 //-- EXPORTER VARIABLES
 const exporterOptions = { binary: true };
+var exporter;
 
 //-- RAYCASTER VARIABLES
 let group;
@@ -80,15 +77,20 @@ let boardCounter = 1;
 let beamCounter = 1;
 let barCounter = 1;
 
+//-----------------------------------------------------------------------------------
+// MAIN
+//-----------------------------------------------------------------------------------
+
 function main() {
   //GUI
   gui = new GUI();
-  gui.add(parameters, "test");
+
   //Add Objects
   const addObjectFolder = gui.addFolder("Add Objects");
   addObjectFolder.add(parameters, "Board");
   addObjectFolder.add(parameters, "Beam");
   addObjectFolder.add(parameters, "Bar");
+
   //Add Object Settings
   const selectedObjectFolder = gui.addFolder("Selected Object");
   selectedObjectFolder.add(parameters, "move");
@@ -103,6 +105,7 @@ function main() {
   exportFolder.add(parameters, "fileName");
   exportFolder.add(parameters, "export");
 
+  //set Controller Value
   widthController.setValue(null);
   heightController.setValue(null);
   depthController.setValue(null);
@@ -115,7 +118,6 @@ function main() {
   //LIGHTINGS
   ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
   scene.add(ambientLight);
-
   directionalLight = new THREE.DirectionalLight(0xffffff, 1);
   directionalLight.position.set(2, 5, 5);
   directionalLight.target.position.set(-1, -1, 0);
@@ -123,7 +125,7 @@ function main() {
   scene.add(directionalLight.target);
 
   //GEOMETRY INITIATION
-  // Initiate first cubes
+  // Create Base Grid
   createGrid();
 
   //CREATE A RENDERER
@@ -154,28 +156,22 @@ function main() {
   //Transform selected Objects
   widthController.onChange(function (v) {
     if (transformedObject != null) {
-      transformedObject.scale.x = scaleFactor(
-        parameters.width,
-        transformedObject.geometry.parameters.width
-      );
+      transformedObject.scale.x =
+        parameters.width / transformedObject.geometry.parameters.width;
     }
   });
 
   heightController.onChange(function (v) {
     if (transformedObject != null) {
-      transformedObject.scale.y = scaleFactor(
-        parameters.height,
-        transformedObject.geometry.parameters.height
-      );
+      transformedObject.scale.y =
+        parameters.width / transformedObject.geometry.parameters.width;
     }
   });
 
   depthController.onChange(function (v) {
     if (transformedObject != null) {
-      transformedObject.scale.z = scaleFactor(
-        parameters.depth,
-        transformedObject.geometry.parameters.depth
-      );
+      transformedObject.scale.z =
+        parameters.width / transformedObject.geometry.parameters.width;
     }
   });
 
@@ -198,7 +194,6 @@ function main() {
 //-----------------------------------------------------------------------------------
 //HELPER FUNCTIONS
 //-----------------------------------------------------------------------------------
-//GEOMETRY FUNCTIONS
 
 // Create Grid
 function createGrid() {
@@ -207,7 +202,6 @@ function createGrid() {
 }
 
 //BOARDS
-//create Boards
 function createBoard() {
   const geometry = new THREE.BoxGeometry(40, 2, 40);
   const material = new THREE.MeshPhysicalMaterial();
@@ -224,8 +218,7 @@ function createBoard() {
   animate();
 }
 
-//Beams
-//create Beams
+//BEAMS
 function createBeam() {
   const geometry = new THREE.BoxGeometry(40, 2, 2);
   const material = new THREE.MeshPhysicalMaterial();
@@ -243,7 +236,6 @@ function createBeam() {
 }
 
 //BARS
-//create Bars
 function createBar() {
   const geometry = new THREE.CylinderGeometry(1, 1, 40, 32);
   const material = new THREE.MeshPhysicalMaterial();
@@ -322,7 +314,6 @@ function onPointerMove(event) {
 }
 
 //CLICK
-
 function onClick() {
   if (selectedObject) {
     transformedObject = selectedObject;
@@ -340,6 +331,7 @@ function onClick() {
   }
 }
 
+//KEY PRESSED
 function onKey() {
   if (event.key === "Escape") {
     deselectTransformedObject();
@@ -353,15 +345,12 @@ function onKey() {
   }
 }
 
+//KEY RELEASED
 function upKey() {
   if (event.key === "Shift") {
     control.setRotationSnap(false);
     control.setTranslationSnap(1);
   }
-}
-
-function scaleFactor(newValue, oldValue) {
-  return newValue / oldValue;
 }
 
 function deleteTransformedObject() {
@@ -418,10 +407,6 @@ function animate() {
 
   renderer.render(scene, camera);
 }
-//-----------------------------------------------------------------------------------
-// CLASS
-//-----------------------------------------------------------------------------------
-
 //-----------------------------------------------------------------------------------
 // EXECUTE MAIN
 //-----------------------------------------------------------------------------------
