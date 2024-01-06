@@ -2,6 +2,8 @@
 import "./style.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { TransformControls } from "three/addons/controls/TransformControls.js";
+import { STLExporter } from "three/addons/exporters/STLExporter.js";
 import GUI, { Controller } from "lil-gui";
 
 //CONSTANT & VARIABLES
@@ -29,9 +31,13 @@ const parameters = {
   test() {
     hi();
   },
+  export() {
+    exportScene();
+  },
   width: 0,
   height: 0,
   depth: 0,
+  fileName: "exported_Model",
 };
 
 function hi() {
@@ -43,9 +49,14 @@ var scene;
 var camera;
 var renderer;
 var container;
+var orbit;
 var control;
 var ambientLight;
 var directionalLight;
+var exporter;
+
+//-- EXPORTER VARIABLES
+const exporterOptions = { binary: true };
 
 //-- RAYCASTER VARIABLES
 let group;
@@ -78,6 +89,15 @@ function main() {
   depthController = selectedObjectFolder.add(parameters, "depth");
   selectedObjectFolder.add(parameters, "delete");
 
+  //Add Export
+  const exportFolder = gui.addFolder("Export");
+  exportFolder.add(parameters, "fileName");
+  exportFolder.add(parameters, "export");
+
+  widthController.setValue(null);
+  heightController.setValue(null);
+  depthController.setValue(null);
+
   //CREATE SCENE AND CAMERA
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(15, width / height, 0.1, 2000);
@@ -105,9 +125,6 @@ function main() {
   let canvas = renderer.domElement;
   container.append(renderer.domElement);
 
-  //CREATE MOUSE CONTROL
-  control = new OrbitControls(camera, renderer.domElement);
-
   //RESPONSIVE WINDOW
   window.addEventListener("resize", handleResize);
   document.addEventListener("pointermove", onPointerMove);
@@ -117,31 +134,49 @@ function main() {
   //RAYCASTER
   group = new THREE.Group();
   scene.add(group);
-  const controls = new OrbitControls(camera, renderer.domElement);
-  controls.minDistance = 2;
-  controls.maxDistance = 1000;
+  orbit = new OrbitControls(camera, renderer.domElement);
+  orbit.minDistance = 2;
+  orbit.maxDistance = 1000;
+
+  //Exporter
+  exporter = new STLExporter();
 
   //Transform selected Objects
   widthController.onChange(function (v) {
-    transformedObject.scale.x = scaleFactor(
-      parameters.width,
-      transformedObject.geometry.parameters.width
-    );
+    if (transformedObject != null) {
+      transformedObject.scale.x = scaleFactor(
+        parameters.width,
+        transformedObject.geometry.parameters.width
+      );
+    }
   });
 
   heightController.onChange(function (v) {
-    transformedObject.scale.y = scaleFactor(
-      parameters.height,
-      transformedObject.geometry.parameters.height
-    );
+    if (transformedObject != null) {
+      transformedObject.scale.y = scaleFactor(
+        parameters.height,
+        transformedObject.geometry.parameters.height
+      );
+    }
   });
 
   depthController.onChange(function (v) {
-    transformedObject.scale.z = scaleFactor(
-      parameters.depth,
-      transformedObject.geometry.parameters.depth
-    );
+    if (transformedObject != null) {
+      transformedObject.scale.z = scaleFactor(
+        parameters.depth,
+        transformedObject.geometry.parameters.depth
+      );
+    }
   });
+
+  control = new TransformControls(camera, renderer.domElement);
+  control.addEventListener("change", animate);
+
+  control.addEventListener("dragging-changed", function (event) {
+    orbit.enabled = !event.value;
+  });
+  control.setMode("translate");
+  control.setSize(1.2);
 
   //EXECUTE THE UPDATE
   animate();
@@ -176,9 +211,6 @@ function createBoard() {
   animate();
 }
 
-//Transform Boards
-function transformBoard() {}
-
 //Beams
 //create Beams
 function createBeam() {
@@ -196,9 +228,6 @@ function createBeam() {
   group.add(beam);
   animate();
 }
-
-//Transform Beams
-function transformBeam() {}
 
 //BARS
 //create Bars
@@ -218,9 +247,6 @@ function createBar() {
   group.add(bar);
   animate();
 }
-
-//Transform Bars
-function transformBar() {}
 
 //Remove 3D Objects and clean the caches
 function removeObject(sceneObject) {
@@ -298,9 +324,15 @@ function onClick() {
     widthController.updateDisplay();
     heightController.updateDisplay();
     depthController.updateDisplay();
+    control.attach(transformedObject);
+    scene.add(control);
   } else if (transformedObject) {
     transformedObject.material.color.set("#69f");
     transformedObject = null;
+    widthController.setValue(null);
+    heightController.setValue(null);
+    depthController.setValue(null);
+    scene.remove(control);
   }
 }
 
@@ -308,9 +340,17 @@ function onKey() {
   if (event.key === "Escape" || event.keyCode === 27) {
     transformedObject.material.color.set("#69f");
     transformedObject = null;
+    widthController.setValue(null);
+    heightController.setValue(null);
+    depthController.setValue(null);
+    scene.remove(control);
   }
   if (event.key === "Backspace" || event.keyCode === 8) {
     removeSelectedObject();
+    widthController.setValue(null);
+    heightController.setValue(null);
+    depthController.setValue(null);
+    scene.remove(control);
   }
 }
 
@@ -318,11 +358,21 @@ function scaleFactor(newValue, oldValue) {
   return newValue / oldValue;
 }
 
+function exportScene() {
+  const download = exporter.parse(scene, exporterOptions);
+  const blob = new Blob([download], { type: "text/plain" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = parameters.fileName + ".stl";
+  link.click();
+  return;
+}
+
 //ANIMATE AND RENDER
 function animate() {
   requestAnimationFrame(animate);
 
-  control.update();
+  orbit.update();
 
   renderer.render(scene, camera);
 }
