@@ -1,8 +1,9 @@
-body {
+body,html {
   margin: 0;
   padding: 0;
   width: 100vw;
   height: 100vh;
+  overflow: hidden; 
 }
 #threejs-container {
   position: block;
@@ -12,4 +13,22 @@ body {
   height: 100vh;
   background: white;
   overflow: hidden;
+}
+.lil-gui {
+	--background-color: #f6f6f6;
+	--text-color: #3d3d3d;
+	--title-background-color: #efefef;
+	--title-text-color: #3d3d3d;
+	--widget-color: #eaeaea;
+	--hover-color: #f0f0f0;
+	--focus-color: #fafafa;
+	--number-color: #07aacf;
+	--string-color: #8da300;
+}
+
+.fonts-loaded {
+  /* Verwende die Schriftart in deinem CSS-Code, wenn geladen */
+  body {
+      font-family: 'Open Sans', sans-serif;
+  }
 }
