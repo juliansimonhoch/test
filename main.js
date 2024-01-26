@@ -179,19 +179,28 @@ uni.style.fontFamily = "Montserrat, Arial, sans-serif";
 uni.style.fontWeight = 500;
 
 
-const manual = document.createElement("m1");
-manual.id = "manual";
-manual.innerText = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. \n Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. ";
-manual.style.fontSize = "20px";
-manual.style.position = "absolute";
-manual.style.color = "#666666";
-manual.style.border = "none";
-manual.style.borderRadius = "5px";
-manual.style.top = "calc(40% + 0px)";
-manual.style.left = "calc(5% + 0px)";
-manual.style.width = "calc(90% + 0px)";
-manual.style.fontFamily = "Montserrat, Arial, sans-serif";
-manual.style.fontWeight = 400;
+// const manual = document.createElement("m1");
+// manual.id = "manual";
+// manual.innerText = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. \n Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. ";
+// manual.style.fontSize = "20px";
+// manual.style.position = "absolute";
+// manual.style.color = "#666666";
+// manual.style.border = "none";
+// manual.style.borderRadius = "5px";
+// manual.style.top = "calc(40% + 0px)";
+// manual.style.left = "calc(5% + 0px)";
+// manual.style.width = "calc(90% + 0px)";
+// manual.style.fontFamily = "Montserrat, Arial, sans-serif";
+// manual.style.fontWeight = 400;
+
+const logoManual = document.createElement("embed");
+logoManual.src = "./pubic/manual test.svg";
+logoManual.style.position = "absolute";
+logoManual.style.top = "calc(40% - 0px)";
+logoManual.style.left = "calc(25% - 0px)";
+logoManual.style.width = "1000px";
+logoManual.style.height = "auto";
+landingPage.appendChild(logoManual);
 
 
 const createProjectButton = document.createElement("button");
@@ -215,7 +224,7 @@ createProjectButton.onclick = function(event) {
 landingPage.appendChild(title);
 landingPage.appendChild(names);
 landingPage.appendChild(uni);
-landingPage.appendChild(manual);
+// landingPage.appendChild(manual);
 landingPage.appendChild(createProjectButton);
 document.body.appendChild(landingPage);
 
