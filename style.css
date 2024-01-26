@@ -1,4 +1,4 @@
-body,html {
+body {
   margin: 0;
   padding: 0;
   width: 100vw;
@@ -26,9 +26,3 @@ body,html {
 	--string-color: #8da300;
 }
 
-.fonts-loaded {
-  /* Verwende die Schriftart in deinem CSS-Code, wenn geladen */
-  body {
-      font-family: 'Open Sans', sans-serif;
-  }
-}
